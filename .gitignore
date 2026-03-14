@@ -1,0 +1,11 @@
+# Dependency directories
+node_modules/
+
+# Environment variables 
+.env
+
+# Mac OS files
+.DS_Store
+
+# Windows OS files
+Thumbs.db
