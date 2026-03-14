@@ -1,4 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Raleway:wght@200;300;400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
+
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -32,10 +34,10 @@ header {
   filter: drop-shadow(0 0 6px rgba(184, 114, 248, 0.7));
 }
 header h1 {
-  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-family: "DM Sans", sans-serif;
   font-size: 1.5rem;
   font-weight: 300;
-  letter-spacing: 0.25em;
+  letter-spacing: 0.1em;
   background: linear-gradient(135deg, #eeddff 0%, #b872f8 50%, #8888f8 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -43,7 +45,7 @@ header h1 {
 .header-sub {
   font-size: 0.7rem;
   color: rgba(175, 120, 255, 0.4);
-  letter-spacing: 0.12em;
+  letter-spacing: 0.8em;
   margin-left: auto;
   text-transform: uppercase;
 }
@@ -64,10 +66,10 @@ header h1 {
 }
 
 .sidebar-title {
-  font-family: 'Cormorant Garamond', serif;
+    font-family: "DM Sans", sans-serif;
   font-size: 1.3rem;
   font-weight: 300;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.1em;
   color: #ddc8f8;
   margin-bottom: 14px;
   text-align: center;
@@ -94,7 +96,7 @@ header h1 {
 }
 
 .memory-item-title {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: "DM Sans", sans-serif;
   font-size: 1.05rem;
   color: #e8d8ff;
   margin-bottom: 4px;
@@ -133,10 +135,10 @@ header h1 {
   gap: 10px;
 }
 #memoryForm h2 {
-  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-family: "DM Sans", sans-serif;
   font-weight: 300;
   font-size: 1.3rem;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.1em;
   color: #ddc8f8;
   margin-bottom: 4px;
 }
@@ -154,7 +156,7 @@ header h1 {
   border: 1px solid rgba(175, 120, 255, 0.2);
   border-radius: 8px;
   color: #ecdcfa;
-  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-family: "DM Sans", sans-serif;
   font-size: 1rem;
   padding: 10px 14px;
   outline: none;
@@ -208,7 +210,7 @@ header h1 {
 
 .toggle-label {
   font-size: 0.7rem;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.1em;
   color: rgba(175, 120, 255, 0.6);
   text-transform: uppercase;
 }
@@ -283,7 +285,7 @@ header h1 {
   max-width: 260px;
 }
 .popup-title {
-  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-family: "DM Sans", sans-serif;
   font-size: 1.1rem;
   font-weight: 400;
   color: #ddc8f8;
@@ -326,7 +328,7 @@ header h1 {
   font-size: 0.8rem;
   padding: 9px 12px;
   box-shadow: 0 3px 14px rgba(98,32,208,0.45);
-  letter-spacing: 0.15em;
+  letter-spacing: 0.1em;
 }
 .popup-btn--dream:hover { opacity: 0.88; }
 .popup-btn--edit {
@@ -388,7 +390,7 @@ header h1 {
   animation: spin 1s linear infinite;
 }
 .dream-loading-text {
-  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-family: "DM Sans", sans-serif;
   font-size: 1.1rem;
   font-weight: 300;
   letter-spacing: 0.28em;
@@ -409,7 +411,7 @@ header h1 {
   max-width: 580px;
 }
 #dream-title {
-  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-family: "DM Sans", sans-serif;
   font-size: clamp(1.6rem, 4vw, 2.9rem);
   font-weight: 300;
   letter-spacing: 0.32em;
@@ -422,7 +424,7 @@ header h1 {
   margin-bottom: 8px;
 }
 #dream-prompt {
-  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-family: "DM Sans", sans-serif;
   font-size: 0.88rem;
   font-style: italic;
   color: rgba(185, 155, 215, 0.5);
