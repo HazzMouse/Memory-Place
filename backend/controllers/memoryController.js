@@ -33,6 +33,22 @@ const isValidLocation = (location) => {
     return true;
 };
 
+function deleteFileIfExists(filePath) {
+  if (!filePath) return;
+
+  // Remove leading slash so path.join works correctly
+  const cleaned = filePath.startsWith('/') ? filePath.slice(1) : filePath;
+
+  const fullPath = path.join(__dirname, '..', cleaned);
+
+  fs.unlink(fullPath, err => {
+    if (err) {
+      console.log("Could not delete file:", fullPath);
+    }
+  });
+}
+
+
 // --- Controller Functions ---
 
 const getAllMemories = (req, res, next) => {
@@ -117,11 +133,15 @@ const updateMemory = (req, res, next) => {
         let newImage = memories[index].image; // keep existing image by default
 
         if (req.file) {
+            // If user uploaded a new image → delete old one
+            if (newImage) deleteFileIfExists(newImage);
             // User uploaded a new image
             newImage = `/uploads/${req.file.filename}`;
         }
 
         if (req.body.removeImage === "true") {
+            // If user removed the image → delete old one
+            if (newImage) deleteFileIfExists(newImage);
             // User wants to remove the image
             newImage = null;
         }
@@ -139,6 +159,8 @@ const updateMemory = (req, res, next) => {
         writeMemories(memories);
         res.json(memories[index]);
 
+        
+
     } catch (error) {
         next(error);
     }
@@ -146,17 +168,24 @@ const updateMemory = (req, res, next) => {
 
 const deleteMemory = (req, res, next) => {
     try {
-        let memories = readMemories();
-        const initialLength = memories.length;
-        
-        memories = memories.filter(m => m.id !== req.params.id);
-        
-        if (memories.length === initialLength) {
+        const memories = readMemories();
+        const id = req.params.id;
+
+        const memory = memories.find(m => m.id === id);
+        if (!memory) {
             res.status(404);
             throw new Error('Memory not found');
         }
 
-        writeMemories(memories);
+        // Delete image if it exists
+        if (memory.image) {
+            deleteFileIfExists(memory.image);
+        }
+
+        // Remove memory from list
+        const updated = memories.filter(m => m.id !== id);
+        writeMemories(updated);
+
         res.json({ message: 'Memory deleted successfully' });
 
     } catch (error) {
