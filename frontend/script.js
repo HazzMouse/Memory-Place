@@ -3,6 +3,13 @@ let tempLatLng = null; // store clicked location
 let memories = [];     // store memory objects
 let editingMemoryId = null; // allow memory editing
 
+const memoryIcon = L.icon({
+  iconUrl: 'marker.png',   // put your custom icon in /frontend
+  iconSize: [44, 66],
+  iconAnchor: [44, 66],
+  popupAnchor: [0, -28]
+});
+
 window.onload = () => {
   // Create the map
   map = L.map('map').setView([-33.8688, 151.2093], 13);
@@ -27,17 +34,20 @@ window.onload = () => {
 
 // Show the memory form
 function showForm(isEditing = false) {
-  document.getElementById("memoryForm").classList.remove("hidden");
+  const form = document.getElementById("memoryForm");
+  form.classList.remove("hidden");
+  setTimeout(() => form.classList.add("show"), 10);
 
-  if (!isEditing) {
-    editingMemoryId = null;
-  }
+  if (!isEditing) editingMemoryId = null;
 }
 
 
 // Hide the form
 function hideForm() {
-  document.getElementById("memoryForm").classList.add("hidden");
+  const form = document.getElementById("memoryForm");
+  form.classList.remove("show");
+  setTimeout(() => form.classList.add("hidden"), 200);
+
   document.getElementById("memoryTitle").value = "";
   document.getElementById("memoryDescription").value = "";
 }
@@ -78,11 +88,13 @@ async function saveMemory() {
   refreshMarkers();
 }
 
-
-
 // Add a pin to the map
 function addMarker(memory) {
-  const marker = L.marker([memory.location.lat, memory.location.lng]).addTo(map);
+  const marker = L.marker([memory.location.lat, memory.location.lng], { icon: memoryIcon }).addTo(map);
+
+  // // Add bounce animation here
+  // const markerEl = marker._icon;
+  // markerEl.classList.add("bounce");
 
   marker.bindPopup(`
     <b>${memory.title}</b><br>
