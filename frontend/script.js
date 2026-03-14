@@ -21,6 +21,7 @@ window.onload = () => {
   // Form buttons
   document.getElementById("saveMemoryBtn").onclick = saveMemory;
   document.getElementById("cancelMemoryBtn").onclick = hideForm;
+  loadMemories();
 };
 
 // Show the memory form
@@ -36,29 +37,52 @@ function hideForm() {
 }
 
 // Save memory + drop pin
-function saveMemory() {
+async function saveMemory() {
   const title = document.getElementById("memoryTitle").value;
-  const description = document.getElementById("memoryDescription").value;
+  const content = document.getElementById("memoryDescription").value;
 
   const memory = {
     title,
-    description,
-    lat: tempLatLng.lat,
-    lng: tempLatLng.lng
+    content,
+    location: {
+      lat: tempLatLng.lat,
+      lng: tempLatLng.lng
+    },
+    time: new Date().toISOString()
   };
 
-  memories.push(memory);
-  addMarker(memory);
+  // Send to backend
+  const res = await fetch("http://localhost:3000/api/memories", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(memory)
+  });
+
+  const savedMemory = await res.json();
+
+  // Add marker to map
+  addMarker(savedMemory);
 
   hideForm();
 }
 
+
 // Add a pin to the map
 function addMarker(memory) {
-  const marker = L.marker([memory.lat, memory.lng]).addTo(map);
+  const marker = L.marker([memory.location.lat, memory.location.lng]).addTo(map);
 
   marker.bindPopup(`
     <b>${memory.title}</b><br>
-    ${memory.description}
+    ${memory.content}<br><br>
+    <small>${new Date(memory.time).toLocaleString()}</small>
   `);
+}
+
+
+// This loads all saved memories from memories.json and displays them.
+async function loadMemories() {
+  const res = await fetch("http://localhost:3000/api/memories");
+  const memories = await res.json();
+
+  memories.forEach(memory => addMarker(memory));
 }
