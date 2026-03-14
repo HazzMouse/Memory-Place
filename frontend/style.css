@@ -36,7 +36,7 @@ header {
 header h1 {
   font-family: "DM Sans", sans-serif;
   font-size: 1.5rem;
-  font-weight: 300;
+  font-weight: bold;
   letter-spacing: 0.1em;
   background: linear-gradient(135deg, #eeddff 0%, #b872f8 50%, #8888f8 100%);
   -webkit-background-clip: text;
