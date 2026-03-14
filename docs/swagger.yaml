@@ -2,7 +2,7 @@ openapi: 3.0.0
 info:
   title: Memory Map API
   description: A spatial memory storage tool designed to help individuals with dementia store and retrieve memories using map coordinates.
-  version: 1.0.0
+  version: 1.1.0
 servers:
   - url: http://localhost:3000
     description: Local development server
@@ -20,6 +20,9 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Memory'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+          
     post:
       summary: Create a new memory
       description: Adds a new memory to the database. The system automatically generates a unique ID based on the timestamp.
@@ -37,7 +40,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/Memory'
         '400':
-          description: Bad request. Missing required fields (title or location).
+          description: Bad request. Missing required fields or invalid coordinates.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 
   /api/memories/{id}:
     parameters:
@@ -63,8 +72,21 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Memory'
+        '400':
+          description: Bad request. Empty title or invalid coordinates.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '404':
           description: Memory not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+          
     delete:
       summary: Delete a memory
       description: Permanently removes a specific memory from the database based on its ID.
@@ -81,6 +103,12 @@ paths:
                     example: Memory deleted successfully
         '404':
           description: Memory not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 
 components:
   schemas:
@@ -93,11 +121,15 @@ components:
         lat:
           type: number
           format: float
+          minimum: -90
+          maximum: 90
           description: Latitude coordinate
           example: -33.8688
         lng:
           type: number
           format: float
+          minimum: -180
+          maximum: 180
           description: Longitude coordinate
           example: 151.2093
 
@@ -132,7 +164,8 @@ components:
       properties:
         title:
           type: string
-          description: A short, recognizable name for the memory.
+          minLength: 1
+          description: A short, recognizable name for the memory. Cannot be empty.
           example: "My Childhood Home"
         content:
           type: string
@@ -145,3 +178,23 @@ components:
           format: date-time
           description: Optional date/time of the memory. Defaults to current time if omitted.
           example: "1985-06-15T00:00:00.000Z"
+
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: A human-readable error message explaining what went wrong.
+          example: "A valid location is required. Latitude must be between -90 and 90..."
+        stack:
+          type: string
+          description: The stack trace of the error (only provided in development environments).
+          example: "Error: A valid location is required...\n    at createMemory (/backend/controllers/memoryController.js:52:19)"
+
+  responses:
+    InternalServerError:
+      description: An unexpected error occurred on the server.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
