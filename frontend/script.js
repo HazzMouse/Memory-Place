@@ -18,7 +18,7 @@ window.onload = () => {
   map = L.map('map').setView([-33.8688, 151.2093], 13);
   map.zoomControl.setPosition('topright');
 
-  L.tileLayer('https://api.maptiler.com/maps/openstreetmap/256/{z}/{x}/{y}.png?key=ZYnLuAnXONks3zYPMqCb', {
+  L.tileLayer('https://api.maptiler.com/maps/openstreetmap/{z}/{x}/{y}.jpg?key=ZYnLuAnXONks3zYPMqCb', {
       tileSize: 256,
       minZoom: 1,
       maxZoom: 20,
