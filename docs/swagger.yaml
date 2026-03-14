@@ -47,7 +47,8 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
         '500':
           $ref: '#/components/responses/InternalServerError'
-  delete:
+
+    delete:
       summary: Delete all memories
       description: Wipes the database clean by permanently removing all stored memories.
       responses:
@@ -63,6 +64,7 @@ paths:
                     example: All memories have been permanently deleted.
         '500':
           $ref: '#/components/responses/InternalServerError'
+
   /api/memories/{id}:
     parameters:
       - in: path
