@@ -10,8 +10,8 @@ let editingMemoryId = null;
 const memoryIcon = L.icon({
   iconUrl: 'marker.png',   // put your custom icon in /frontend
   iconSize: [44, 66],
-  iconAnchor: [44, 66],
-  popupAnchor: [0, -28]
+  iconAnchor: [22, 66],
+  popupAnchor: [0, -66]
 });
 
 window.onload = () => {
@@ -70,7 +70,9 @@ async function saveMemory() {
 }
 
 function addMarker(memory) {
-  const marker = L.marker([memory.location.lat, memory.location.lng]).addTo(map);
+  // Add the memoryIcon to the marker
+  const marker = L.marker([memory.location.lat, memory.location.lng], { icon: memoryIcon }).addTo(map);
+  
   marker.bindPopup(`
     <div class="popup-inner">
       <div class="popup-title">${memory.title}</div>
