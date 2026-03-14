@@ -36,6 +36,7 @@ header h1 {
   font-weight: 300;
   letter-spacing: 0.25em;
   background: linear-gradient(135deg, #eeddff 0%, #b872f8 50%, #8888f8 100%);
+  -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 .header-sub {
@@ -293,6 +294,7 @@ header h1 {
   background: linear-gradient(90deg, #eed8ff, #b872f8, #88b8ff, #b872f8, #eed8ff);
   background-size: 300% 100%;
   animation: shimmer 6s ease infinite;
+  -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   margin-bottom: 8px;
 }
