@@ -18,14 +18,28 @@ window.onload = () => {
   map = L.map('map').setView([-33.8688, 151.2093], 13);
   map.zoomControl.setPosition('topright');
 
-L.tileLayer('https://api.maptiler.com/maps/openstreetmap/256/{z}/{x}/{y}.png?key=ZYnLuAnXONks3zYPMqCb', {
-    tileSize: 256,          // 👈 Changed to 256 for smaller, faster-loading tiles
-    // zoomOffset: -1,       // 👈 Remove this! It's not needed with 256px tiles
-    minZoom: 1,
-    maxZoom: 20,
-    attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">© MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">© OpenStreetMap contributors</a>',
-    crossOrigin: true
-}).addTo(map);
+  L.tileLayer('https://api.maptiler.com/maps/openstreetmap/256/{z}/{x}/{y}.png?key=ZYnLuAnXONks3zYPMqCb', {
+      tileSize: 256,
+      minZoom: 1,
+      maxZoom: 20,
+      attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">© MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">© OpenStreetMap contributors</a>',
+      crossOrigin: true,
+  }).addTo(map);
+
+  // Rip I was trying to make the default a cursor instead of a hand
+  // map.getCanvas().style.cursor = 'default';
+
+  // map.on('mousedown', () => {
+  //     map.getCanvas().style.cursor = 'grabbing';
+  // });
+  
+  // map.on('mouseup', () => {
+  //     map.getCanvas().style.cursor = 'default';
+  // });
+  
+  // map.on('dragend', () => {
+  //     map.getCanvas().style.cursor = 'default';
+  // });
 
   map.on('click', (e) => {
     tempLatLng = e.latlng;

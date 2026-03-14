@@ -491,3 +491,13 @@ header h1 {
 #dream-back-btn:hover {
   background: rgba(100, 40, 200, 0.38);
 }
+
+.maplibregl-canvas-container,
+.maplibregl-interactive,
+.maplibregl-canvas {
+    cursor: default !important;
+}
+
+.maplibregl-canvas-container.maplibregl-dragging .maplibregl-canvas {
+    cursor: grabbing !important;
+}
