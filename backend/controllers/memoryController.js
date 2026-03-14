@@ -150,6 +150,6 @@ module.exports = {
     getAllMemories,
     createMemory,
     updateMemory,
-    deleteMemory
+    deleteMemory,
     deleteAllMemories
 };
