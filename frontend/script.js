@@ -13,6 +13,8 @@ const memoryIcon = L.icon({
 window.onload = () => {
   // Create the map
   map = L.map('map').setView([-33.8688, 151.2093], 13);
+  map.zoomControl.setPosition('topright');
+
 
   // Add OpenStreetMap tiles
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -95,6 +97,8 @@ function addMarker(memory) {
   // // Add bounce animation here
   // const markerEl = marker._icon;
   // markerEl.classList.add("bounce");
+  memory.marker = marker;
+
 
   marker.bindPopup(`
     <b>${memory.title}</b><br>
@@ -113,8 +117,28 @@ async function loadMemories() {
   const res = await fetch("http://localhost:3000/api/memories");
   const memories = await res.json();
 
-  memories.forEach(memory => addMarker(memory));
+  const list = document.getElementById("memoryList");
+  list.innerHTML = ""; // clear sidebar
+
+  memories.forEach(memory => {
+    addMarker(memory);
+
+    // Add to sidebar
+    const li = document.createElement("li");
+    li.textContent = memory.title;
+
+    li.onclick = () => {
+      map.setView([memory.location.lat, memory.location.lng], 16);
+      // Open popup after map moves
+      setTimeout(() => {
+        memory.marker.openPopup();
+      }, 300);
+    };
+
+    list.appendChild(li);
+  });
 }
+
 
 async function startEdit(id) {
   // Load all memories from backend
