@@ -1,35 +1,69 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>MemoryPlace</title>
-    <link rel="stylesheet" href="style.css" />
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MemoryPlace</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
 
-    <!-- Leaflet CSS -->
-    <link
-      rel="stylesheet"
-      href="https://unpkg.com/leaflet/dist/leaflet.css"
-    />
-
-    <!-- Leaflet JS -->
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  </head>
-
-  <body>
-    <div id="memoryForm" class="hidden">
-      <h2>Add Memory</h2>
-      <label>Title:</label>
-      <input id="memoryTitle" type="text">
-
-      <label>Description:</label>
-      <textarea id="memoryDescription"></textarea>
-
-      <button id="saveMemoryBtn">Save Memory</button>
-      <button id="cancelMemoryBtn">Cancel</button>
+  <!-- ── Add/Edit Memory Form ── -->
+  <div id="memoryForm" class="hidden">
+    <h2>Add Memory</h2>
+    <label>Title</label>
+    <input id="memoryTitle" type="text" placeholder="A summer afternoon…" />
+    <label>Description</label>
+    <textarea id="memoryDescription" placeholder="Describe what you remember…"></textarea>
+    <div class="form-actions">
+      <button id="saveMemoryBtn" class="btn btn--primary">Save Memory</button>
+      <button id="cancelMemoryBtn" class="btn btn--ghost">Cancel</button>
     </div>
-    
-    <h1>MemoryPlace</h1>
-    <div id="map"></div>
+  </div>
 
-    <script src="script.js"></script>
-  </body>
+  <!-- ── Page Header ── -->
+  <header>
+    <span class="header-logo">✦</span>
+    <h1>MemoryPlace</h1>
+    <span class="header-sub">click anywhere on the map to add a memory</span>
+  </header>
+
+  <!-- ── Map ── -->
+  <div id="map"></div>
+
+  <!-- ── Dream Visualiser Overlay ── -->
+  <div id="dream-overlay">
+    <!-- Canvas fills the overlay -->
+    <canvas id="dream-canvas"></canvas>
+
+    <!-- Vignette -->
+    <div class="dream-vignette"></div>
+
+    <!-- Loading state -->
+    <div id="dream-loading">
+      <div class="dream-spinner"></div>
+      <div class="dream-loading-text">dissolving into dream…</div>
+    </div>
+
+    <!-- Scene title + prompt -->
+    <div class="dream-title-wrap">
+      <div id="dream-title"></div>
+      <div id="dream-prompt"></div>
+    </div>
+
+    <!-- Controls hint -->
+    <div class="dream-controls-hint">drag to rotate &nbsp;·&nbsp; scroll to zoom &nbsp;·&nbsp; right-drag to pan</div>
+
+    <!-- Tags -->
+    <div id="dream-tags"></div>
+
+    <!-- Back button -->
+    <button id="dream-back-btn" onclick="closeDreamVisualiser()">← back to map</button>
+  </div>
+
+  <script src="script.js"></script>
+</body>
 </html>
