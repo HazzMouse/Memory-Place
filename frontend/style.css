@@ -15,6 +15,7 @@ body {
 
 /* ── Header ── */
 header {
+  height: 64px;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -46,6 +47,65 @@ header h1 {
   margin-left: auto;
   text-transform: uppercase;
 }
+
+/* ── Sidebar ── */
+#sidebar {
+  position: absolute;
+  top: 64px;
+  left: 0;
+  width: 260px;
+  height: calc(100% - 60px);
+  background: rgba(14, 8, 30, 0.72);
+  border-right: 1px solid rgba(175, 120, 255, 0.15);
+  backdrop-filter: blur(18px);
+  padding: 18px 14px;
+  overflow-y: auto;
+  z-index: 600;
+}
+
+.sidebar-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.3rem;
+  font-weight: 300;
+  letter-spacing: 0.18em;
+  color: #ddc8f8;
+  margin-bottom: 14px;
+  text-align: center;
+}
+
+#memoryList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.memory-item {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(175, 120, 255, 0.18);
+  border-radius: 10px;
+  padding: 12px 14px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.memory-item:hover {
+  background: rgba(175, 120, 255, 0.12);
+  transform: translateX(4px);
+}
+
+.memory-item-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.05rem;
+  color: #e8d8ff;
+  margin-bottom: 4px;
+}
+
+.memory-item-time {
+  font-size: 0.7rem;
+  color: rgba(175, 120, 255, 0.45);
+  letter-spacing: 0.08em;
+}
+
 
 /* ── Map ── */
 #map {

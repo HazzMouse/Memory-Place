@@ -8,7 +8,7 @@ let memories = [];
 let editingMemoryId = null;
 
 const memoryIcon = L.icon({
-  iconUrl: 'marker.png',   // put your custom icon in /frontend
+  iconUrl: 'marker.png',
   iconSize: [44, 66],
   iconAnchor: [22, 66],
   popupAnchor: [0, -66]
@@ -17,7 +17,6 @@ const memoryIcon = L.icon({
 window.onload = () => {
   map = L.map('map').setView([-33.8688, 151.2093], 13);
   map.zoomControl.setPosition('topright');
-
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
@@ -35,6 +34,44 @@ window.onload = () => {
   loadMemories();
 };
 
+// SIDEBAR
+function renderSidebar() {
+  const list = document.getElementById("memoryList");
+  list.innerHTML = "";
+
+  memories.forEach(memory => {
+    const item = document.createElement("div");
+    item.className = "memory-item";
+    item.onclick = () => focusMemory(memory);
+
+    item.innerHTML = `
+      <div class="memory-item-title">${memory.title}</div>
+      <div class="memory-item-time">${new Date(memory.time).toLocaleString()}</div>
+    `;
+
+    list.appendChild(item);
+  });
+}
+
+function focusMemory(memory) {
+  map.setView([memory.location.lat, memory.location.lng], 16);
+
+  // Find the marker and open its popup
+  map.eachLayer(layer => {
+    if (layer instanceof L.Marker) {
+      const pos = layer.getLatLng();
+      if (pos.lat === memory.location.lat && pos.lng === memory.location.lng) {
+        layer.openPopup();
+      }
+    }
+  });
+}
+
+
+// ─────────────────────────────────────────────────────────────────────────────
+// FORM HANDLING
+// ─────────────────────────────────────────────────────────────────────────────
+
 function showForm(isEditing = false) {
   document.getElementById('memoryForm').classList.remove('hidden');
   if (!isEditing) editingMemoryId = null;
@@ -44,7 +81,12 @@ function hideForm() {
   document.getElementById('memoryForm').classList.add('hidden');
   document.getElementById('memoryTitle').value = '';
   document.getElementById('memoryDescription').value = '';
+  document.getElementById('memoryImage').value = '';
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SAVE / UPDATE MEMORY
+// ─────────────────────────────────────────────────────────────────────────────
 
 async function saveMemory() {
   const title = document.getElementById("memoryTitle").value;
@@ -69,31 +111,31 @@ async function saveMemory() {
     method = "PUT";
   }
 
-  const res = await fetch(url, {
-    method,
-    body: formData
-  });
+  await fetch(url, { method, body: formData });
+
   hideForm();
   refreshMarkers();
 }
 
-// Add a pin to the map
+// ─────────────────────────────────────────────────────────────────────────────
+// MARKERS + POPUPS
+// ─────────────────────────────────────────────────────────────────────────────
+
 function addMarker(memory) {
-  // Add the memoryIcon to the marker
   const marker = L.marker([memory.location.lat, memory.location.lng], { icon: memoryIcon }).addTo(map);
-  
+
   marker.bindPopup(`
-    <b>${memory.title}</b><br>
-    ${memory.content}<br><br>
-    ${memory.image ? `<img src="http://localhost:3000${memory.image}" style="width:200px;border-radius:8px;">` : ""}
-    <br><small>${new Date(memory.time).toLocaleString()}</small>
-    <br><br>
-    <button onclick="startEdit('${memory.id}')">Edit</button>
-    <button onclick="deleteMemory('${memory.id}')">Delete</button>
     <div class="popup-inner">
       <div class="popup-title">${memory.title}</div>
       <div class="popup-content">${memory.content}</div>
-      <small class="popup-time">${new Date(memory.time).toLocaleString()}</small>
+
+      ${memory.image ? `
+        <img src="http://localhost:3000${memory.image}" 
+             style="width:100%;border-radius:8px;margin:8px 0;">
+      ` : ""}
+
+      <span class="popup-time">${new Date(memory.time).toLocaleString()}</span>
+
       <div class="popup-actions">
         <button class="popup-btn popup-btn--dream" onclick="enterMemory('${memory.id}')">✦ Enter Memory</button>
         <button class="popup-btn popup-btn--edit" onclick="startEdit('${memory.id}')">Edit</button>
@@ -103,21 +145,27 @@ function addMarker(memory) {
   `);
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// LOAD / EDIT / DELETE
+// ─────────────────────────────────────────────────────────────────────────────
+
 async function loadMemories() {
   const res = await fetch('http://localhost:3000/api/memories');
-  const data = await res.json();
-  memories = data;
-  data.forEach(memory => addMarker(memory));
+  memories = await res.json();
+
+  memories.forEach(memory => addMarker(memory));
+  renderSidebar();
 }
 
-async function startEdit(id) {
-  const res = await fetch('http://localhost:3000/api/memories');
-  const data = await res.json();
-  const memory = data.find(m => m.id === id);
+function startEdit(id) {
+  const memory = memories.find(m => m.id === id);
+  if (!memory) return;
+
   document.getElementById('memoryTitle').value = memory.title;
   document.getElementById('memoryDescription').value = memory.content;
   tempLatLng = memory.location;
   editingMemoryId = id;
+
   showForm(true);
 }
 
@@ -127,7 +175,9 @@ async function deleteMemory(id) {
 }
 
 async function refreshMarkers() {
-  map.eachLayer(layer => { if (layer instanceof L.Marker) map.removeLayer(layer); });
+  map.eachLayer(layer => {
+    if (layer instanceof L.Marker) map.removeLayer(layer);
+  });
   loadMemories();
 }
 
