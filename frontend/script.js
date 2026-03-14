@@ -1,6 +1,7 @@
 let map;
 let tempLatLng = null; // store clicked location
 let memories = [];     // store memory objects
+let editingMemoryId = null; // allow memory editing
 
 window.onload = () => {
   // Create the map
@@ -25,9 +26,14 @@ window.onload = () => {
 };
 
 // Show the memory form
-function showForm() {
+function showForm(isEditing = false) {
   document.getElementById("memoryForm").classList.remove("hidden");
+
+  if (!isEditing) {
+    editingMemoryId = null;
+  }
 }
+
 
 // Hide the form
 function hideForm() {
@@ -44,27 +50,34 @@ async function saveMemory() {
   const memory = {
     title,
     content,
-    location: {
-      lat: tempLatLng.lat,
-      lng: tempLatLng.lng
-    },
+    location: tempLatLng,
     time: new Date().toISOString()
   };
 
-  // Send to backend
-  const res = await fetch("http://localhost:3000/api/memories", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(memory)
-  });
+  let res;
+
+  if (editingMemoryId) {
+    // EDIT
+    res = await fetch(`http://localhost:3000/api/memories/${editingMemoryId}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(memory)
+    });
+  } else {
+    // CREATE
+    res = await fetch("http://localhost:3000/api/memories", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(memory)
+    });
+  }
 
   const savedMemory = await res.json();
 
-  // Add marker to map
-  addMarker(savedMemory);
-
   hideForm();
+  refreshMarkers();
 }
+
 
 
 // Add a pin to the map
@@ -75,8 +88,12 @@ function addMarker(memory) {
     <b>${memory.title}</b><br>
     ${memory.content}<br><br>
     <small>${new Date(memory.time).toLocaleString()}</small>
+    <br><br>
+    <button onclick="startEdit('${memory.id}')">Edit</button>
+    <button onclick="deleteMemory('${memory.id}')">Delete</button>
   `);
 }
+
 
 
 // This loads all saved memories from memories.json and displays them.
@@ -85,4 +102,41 @@ async function loadMemories() {
   const memories = await res.json();
 
   memories.forEach(memory => addMarker(memory));
+}
+
+async function startEdit(id) {
+  // Load all memories from backend
+  const res = await fetch("http://localhost:3000/api/memories");
+  const memories = await res.json();
+
+  const memory = memories.find(m => m.id === id);
+
+  // Fill the form with existing data
+  document.getElementById("memoryTitle").value = memory.title;
+  document.getElementById("memoryDescription").value = memory.content;
+
+  tempLatLng = memory.location; // keep the same location
+  editingMemoryId = id;
+
+  showForm(true);
+}
+
+async function deleteMemory(id) {
+  await fetch(`http://localhost:3000/api/memories/${id}`, {
+    method: "DELETE"
+  });
+
+  refreshMarkers();
+}
+
+async function refreshMarkers() {
+  // Remove all markers from the map
+  map.eachLayer(layer => {
+    if (layer instanceof L.Marker) {
+      map.removeLayer(layer);
+    }
+  });
+
+  // Reload memories
+  loadMemories();
 }
