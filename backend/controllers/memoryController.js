@@ -136,9 +136,20 @@ const deleteMemory = (req, res, next) => {
     }
 };
 
+const deleteAllMemories = (req, res, next) => {
+    try {
+        // Overwrite the database with an empty array
+        writeMemories([]);
+        res.json({ message: 'All memories have been permanently deleted.' });
+    } catch (error) {
+        next(error);
+    }
+};
+
 module.exports = {
     getAllMemories,
     createMemory,
     updateMemory,
     deleteMemory
+    deleteAllMemories
 };
