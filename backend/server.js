@@ -1,9 +1,14 @@
 const express = require('express');
 const cors = require('cors');
-require('dotenv').config();
+const dotenv = require('dotenv');
+const path = require('path');
+
+// Load .env from two directories back
+dotenv.config({ path: path.join(__dirname, '../.env') });
 
 const memoryRoutes = require('./routes/memoryRoutes');
-const { errorHandler } = require('./middleware/errorMiddleware'); // Import the middleware
+const parseMemoryRoute = require('./routes/parseMemoryRoute');
+const { errorHandler } = require('./middleware/errorMiddleware');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -18,12 +23,11 @@ app.use('/api/memories', memoryRoutes);
 
 // Serve uploaded images
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/api/parse-memory', parseMemoryRoute);
 
-// --- Error Handler Middleware ---
-// This goes AFTER the routes so it can catch anything the routes throw
+// Error Handler (must come after routes)
 app.use(errorHandler);
 
-// Start the Server
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });

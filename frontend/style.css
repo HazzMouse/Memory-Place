@@ -1,114 +1,368 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Raleway:wght@200;300;400&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── Base ── */
 body {
-  margin: 0;
-  font-family: Arial, sans-serif;
+  font-family: 'Raleway', Arial, sans-serif;
+  background: #0e0b16;
+  color: #e2d2f6;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
-h1 {
-  text-align: center;
-  padding: 10px;
+/* ── Header ── */
+header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 20px;
+  background: rgba(10, 6, 22, 0.92);
+  border-bottom: 1px solid rgba(175, 120, 255, 0.15);
+  backdrop-filter: blur(12px);
+  z-index: 500;
+  flex-shrink: 0;
+}
+.header-logo {
+  font-size: 1.1rem;
+  color: #b872f8;
+  filter: drop-shadow(0 0 6px rgba(184, 114, 248, 0.7));
+}
+header h1 {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.5rem;
+  font-weight: 300;
+  letter-spacing: 0.25em;
+  background: linear-gradient(135deg, #eeddff 0%, #b872f8 50%, #8888f8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.header-sub {
+  font-size: 0.7rem;
+  color: rgba(175, 120, 255, 0.4);
+  letter-spacing: 0.12em;
+  margin-left: auto;
+  text-transform: uppercase;
 }
 
+/* ── Map ── */
 #map {
-  height: 90vh;
+  flex: 1;
   width: 100%;
+  min-height: 0;
 }
 
+/* ── Add Memory Form ── */
 #memoryForm {
   position: fixed;
-  top: 20%;
+  top: 50%;
   left: 50%;
-  transform: translateX(-50%);
-  background: white;
-  padding: 20px;
-  border-radius: 12px;
-  width: 300px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  transform: translate(-50%, -50%);
+  background: rgba(14, 8, 30, 0.96);
+  border: 1px solid rgba(175, 120, 255, 0.25);
+  border-radius: 16px;
+  padding: 28px 28px 22px;
+  width: 320px;
+  box-shadow: 0 16px 60px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(175,120,255,0.08);
+  backdrop-filter: blur(24px);
   z-index: 1000;
-  opacity: 0;
-  transform: translateY(-10px);
-  transition: opacity 0.25s ease, transform 0.25s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
-
-.hidden {
-  display: none;
+#memoryForm h2 {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-weight: 300;
+  font-size: 1.3rem;
+  letter-spacing: 0.2em;
+  color: #ddc8f8;
+  margin-bottom: 4px;
 }
-
+#memoryForm label {
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  color: rgba(175, 120, 255, 0.6);
+  text-transform: uppercase;
+  margin-bottom: -4px;
+}
 #memoryForm input,
 #memoryForm textarea {
   width: 100%;
-  margin-bottom: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(175, 120, 255, 0.2);
+  border-radius: 8px;
+  color: #ecdcfa;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1rem;
+  padding: 10px 14px;
+  outline: none;
+  resize: none;
+  transition: border-color 0.2s;
 }
-
-#memoryForm button {
-  margin-right: 10px;
+#memoryForm input:focus,
+#memoryForm textarea:focus {
+  border-color: rgba(175, 120, 255, 0.6);
 }
-
-#memoryForm.show {
-  opacity: 1;
-  transform: translateY(0);
+#memoryForm textarea { min-height: 90px; }
+.form-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
 }
-
-.leaflet-marker-icon.bounce {
-  animation: bounce 0.4s ease;
-}
-
-@keyframes bounce {
-  0%   { transform: translateY(-20px); opacity: 0; }
-  100% { transform: translateY(0); opacity: 1; }
-}
-
-#memoryForm button {
-  background: #4a90e2;
-  color: white;
+.btn {
+  flex: 1;
   border: none;
-  padding: 8px 14px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background 0.2s ease, transform 0.1s ease;
-}
-
-#memoryForm button:hover {
-  background: #3a78c2;
-}
-
-#memoryForm button:active {
-  transform: scale(0.97);
-}
-
-#sidebar {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 260px;
-  height: 100%;
-  background: #ffffff;
-  border-right: 1px solid #ddd;
-  padding: 15px;
-  overflow-y: auto;
-  z-index: 1000;
-}
-
-#sidebar h2 {
-  margin-top: 0;
-  font-size: 20px;
-  font-weight: bold;
-}
-
-#memoryList {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-#memoryList li {
+  border-radius: 8px;
+  font-family: 'Raleway', sans-serif;
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
   padding: 10px;
-  margin-bottom: 8px;
-  background: #f5f5f5;
-  border-radius: 6px;
   cursor: pointer;
-  transition: background 0.2s ease;
+  transition: opacity 0.2s, background 0.2s;
+}
+.btn--primary {
+  background: linear-gradient(135deg, #6220d0, #a050ee);
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(98, 32, 208, 0.4);
+}
+.btn--primary:hover { opacity: 0.88; }
+.btn--ghost {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(175,120,255,0.2);
+  color: rgba(175,120,255,0.7);
+}
+.btn--ghost:hover { background: rgba(175,120,255,0.1); }
+
+.hidden { display: none !important; }
+
+/* ── Leaflet popup overrides ── */
+.leaflet-popup-content-wrapper {
+  background: rgba(12, 7, 28, 0.96) !important;
+  border: 1px solid rgba(175, 120, 255, 0.22) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5) !important;
+  backdrop-filter: blur(20px);
+  color: #e2d2f6 !important;
+  padding: 0 !important;
+}
+.leaflet-popup-tip {
+  background: rgba(12, 7, 28, 0.96) !important;
+}
+.leaflet-popup-content {
+  margin: 0 !important;
+  font-family: 'Raleway', sans-serif !important;
+}
+.popup-inner {
+  padding: 16px 18px 14px;
+  min-width: 200px;
+  max-width: 260px;
+}
+.popup-title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.1rem;
+  font-weight: 400;
+  color: #ddc8f8;
+  letter-spacing: 0.06em;
+  margin-bottom: 5px;
+}
+.popup-content {
+  font-size: 0.82rem;
+  color: rgba(210, 185, 240, 0.7);
+  line-height: 1.55;
+  margin-bottom: 7px;
+}
+.popup-time {
+  font-size: 0.68rem;
+  color: rgba(175, 120, 255, 0.4);
+  letter-spacing: 0.08em;
+  display: block;
+  margin-bottom: 12px;
+}
+.popup-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.popup-btn {
+  border: none;
+  border-radius: 7px;
+  font-family: 'Raleway', sans-serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  padding: 7px 12px;
+  cursor: pointer;
+  transition: opacity 0.2s, background 0.2s;
+  text-align: center;
+}
+.popup-btn--dream {
+  background: linear-gradient(135deg, #6220d0, #a050ee, #7030e0);
+  background-size: 200% 200%;
+  color: #fff;
+  font-size: 0.8rem;
+  padding: 9px 12px;
+  box-shadow: 0 3px 14px rgba(98,32,208,0.45);
+  letter-spacing: 0.15em;
+}
+.popup-btn--dream:hover { opacity: 0.88; }
+.popup-btn--edit {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(175,120,255,0.2);
+  color: rgba(200,170,255,0.7);
+}
+.popup-btn--edit:hover { background: rgba(175,120,255,0.12); }
+.popup-btn--delete {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,80,80,0.18);
+  color: rgba(255,150,150,0.55);
+}
+.popup-btn--delete:hover { background: rgba(255,80,80,0.1); color: rgba(255,150,150,0.9); }
+
+/* ── Dream Visualiser Overlay ── */
+@keyframes shimmer { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
+@keyframes fadeIn  { from{opacity:0} to{opacity:1} }
+@keyframes spin    { to{transform:rotate(360deg)} }
+
+#dream-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+}
+#dream-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  cursor: grab;
+}
+#dream-canvas:active { cursor: grabbing; }
+
+.dream-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 48%, rgba(4, 2, 14, 0.72) 100%);
 }
 
-#memoryList li:hover {
-  background: #e0e0e0;
+/* Loading */
+#dream-loading {
+  position: absolute;
+  inset: 0;
+  background: rgba(7, 4, 15, 0.94);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 18px;
+}
+.dream-spinner {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid rgba(175, 120, 255, 0.15);
+  border-top-color: rgba(175, 120, 255, 0.8);
+  animation: spin 1s linear infinite;
+}
+.dream-loading-text {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.1rem;
+  font-weight: 300;
+  letter-spacing: 0.28em;
+  color: rgba(175, 120, 255, 0.7);
+  font-style: italic;
+}
+
+/* Title overlay */
+.dream-title-wrap {
+  position: absolute;
+  bottom: 52px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  pointer-events: none;
+  animation: fadeIn 2s ease;
+  width: 90%;
+  max-width: 580px;
+}
+#dream-title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(1.6rem, 4vw, 2.9rem);
+  font-weight: 300;
+  letter-spacing: 0.32em;
+  text-transform: lowercase;
+  background: linear-gradient(90deg, #eed8ff, #b872f8, #88b8ff, #b872f8, #eed8ff);
+  background-size: 300% 100%;
+  animation: shimmer 6s ease infinite;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 8px;
+}
+#dream-prompt {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 0.88rem;
+  font-style: italic;
+  color: rgba(185, 155, 215, 0.5);
+  line-height: 1.55;
+}
+
+/* Controls hint */
+.dream-controls-hint {
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Raleway', sans-serif;
+  font-size: 0.63rem;
+  letter-spacing: 0.16em;
+  color: rgba(150, 110, 195, 0.38);
+  pointer-events: none;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* Tags */
+#dream-tags {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  max-width: 45%;
+}
+.dream-tag {
+  background: rgba(70, 22, 150, 0.28);
+  border: 1px solid rgba(175, 120, 255, 0.18);
+  border-radius: 20px;
+  padding: 3px 10px;
+  font-family: 'Raleway', sans-serif;
+  font-size: 0.63rem;
+  font-weight: 300;
+  letter-spacing: 0.13em;
+  color: rgba(195, 155, 255, 0.65);
+  text-transform: uppercase;
+}
+
+/* Back button */
+#dream-back-btn {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: rgba(8, 4, 22, 0.65);
+  border: 1px solid rgba(175, 120, 255, 0.25);
+  border-radius: 8px;
+  color: rgba(175, 120, 255, 0.82);
+  font-family: 'Raleway', sans-serif;
+  font-weight: 300;
+  font-size: 0.75rem;
+  letter-spacing: 0.13em;
+  padding: 9px 18px;
+  cursor: pointer;
+  backdrop-filter: blur(14px);
+  transition: background 0.2s;
+}
+#dream-back-btn:hover {
+  background: rgba(100, 40, 200, 0.38);
 }
