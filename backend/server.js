@@ -7,6 +7,7 @@ const { errorHandler } = require('./middleware/errorMiddleware'); // Import the 
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const path = require('path');
 
 // Middleware
 app.use(cors());
@@ -14,6 +15,9 @@ app.use(express.json());
 
 // Routes
 app.use('/api/memories', memoryRoutes);
+
+// Serve uploaded images
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // --- Error Handler Middleware ---
 // This goes AFTER the routes so it can catch anything the routes throw

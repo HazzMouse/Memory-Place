@@ -46,11 +46,14 @@ const getAllMemories = (req, res, next) => {
 
 const createMemory = (req, res, next) => {
     try {
-        const { title, content, location, time } = req.body;
+        const { title, content, time } = req.body;
 
-        // Validation: Throwing an error automatically sends it to the catch block
+        // ⭐ Parse location FIRST
+        const location = JSON.parse(req.body.location);
+
+        // ⭐ Validate AFTER parsing
         if (!title || typeof title !== 'string' || title.trim() === '') {
-            res.status(400); 
+            res.status(400);
             throw new Error('A valid title is required.');
         }
 
@@ -59,15 +62,20 @@ const createMemory = (req, res, next) => {
             throw new Error('A valid location is required. Latitude must be between -90 and 90, and longitude between -180 and 180.');
         }
 
+        // ⭐ Handle image
+        const imageUrl = req.file ? `/uploads/${req.file.filename}` : null;
+
         const memories = readMemories();
         const newMemory = {
             id: Date.now().toString(),
             title: title.trim(),
             content: content ? String(content).trim() : '',
-            location,
-            time: time || new Date().toISOString()
+            location, // ✅ use the parsed location
+            time: time || new Date().toISOString(),
+            image: imageUrl
         };
-        
+
+
         memories.push(newMemory);
         writeMemories(memories);
         res.status(201).json(newMemory);
@@ -94,9 +102,15 @@ const updateMemory = (req, res, next) => {
             throw new Error('Title cannot be empty.');
         }
 
-        if (location !== undefined && !isValidLocation(location)) {
-            res.status(400);
-            throw new Error('Invalid location. Latitude must be between -90 and 90, and longitude between -180 and 180.');
+        let parsedLocation = memories[index].location;
+
+        if (req.body.location !== undefined) {
+            parsedLocation = JSON.parse(req.body.location);
+
+            if (!isValidLocation(parsedLocation)) {
+                res.status(400);
+                throw new Error('Invalid location.');
+            }
         }
 
         // Apply updates
@@ -104,7 +118,7 @@ const updateMemory = (req, res, next) => {
             ...memories[index],
             title: title !== undefined ? title.trim() : memories[index].title,
             content: content !== undefined ? String(content).trim() : memories[index].content,
-            location: location !== undefined ? location : memories[index].location,
+            location: parsedLocation, // ✅ always use the validated value
             time: time !== undefined ? time : memories[index].time
         };
 

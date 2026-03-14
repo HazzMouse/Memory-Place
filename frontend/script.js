@@ -58,37 +58,35 @@ function hideForm() {
 async function saveMemory() {
   const title = document.getElementById("memoryTitle").value;
   const content = document.getElementById("memoryDescription").value;
+  const imageFile = document.getElementById("memoryImage").files[0];
 
-  const memory = {
-    title,
-    content,
-    location: tempLatLng,
-    time: new Date().toISOString()
-  };
+  const formData = new FormData();
+  formData.append("title", title);
+  formData.append("content", content);
+  formData.append("time", new Date().toISOString());
+  formData.append("location", JSON.stringify(tempLatLng));
 
-  let res;
-
-  if (editingMemoryId) {
-    // EDIT
-    res = await fetch(`http://localhost:3000/api/memories/${editingMemoryId}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(memory)
-    });
-  } else {
-    // CREATE
-    res = await fetch("http://localhost:3000/api/memories", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(memory)
-    });
+  if (imageFile) {
+    formData.append("image", imageFile);
   }
 
-  const savedMemory = await res.json();
+  let url = "http://localhost:3000/api/memories";
+  let method = "POST";
+
+  if (editingMemoryId) {
+    url = `http://localhost:3000/api/memories/${editingMemoryId}`;
+    method = "PUT";
+  }
+
+  const res = await fetch(url, {
+    method,
+    body: formData
+  });
 
   hideForm();
   refreshMarkers();
 }
+
 
 // Add a pin to the map
 function addMarker(memory) {
@@ -103,7 +101,8 @@ function addMarker(memory) {
   marker.bindPopup(`
     <b>${memory.title}</b><br>
     ${memory.content}<br><br>
-    <small>${new Date(memory.time).toLocaleString()}</small>
+    ${memory.image ? `<img src="http://localhost:3000${memory.image}" style="width:200px;border-radius:8px;">` : ""}
+    <br><small>${new Date(memory.time).toLocaleString()}</small>
     <br><br>
     <button onclick="startEdit('${memory.id}')">Edit</button>
     <button onclick="deleteMemory('${memory.id}')">Delete</button>
