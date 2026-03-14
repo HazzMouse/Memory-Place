@@ -197,6 +197,69 @@ header h1 {
 
 .hidden { display: none !important; }
 
+/* Toggle Switch */
+.toggle-wrap {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 6px;
+  margin-bottom: 4px;
+}
+
+.toggle-label {
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  color: rgba(175, 120, 255, 0.6);
+  text-transform: uppercase;
+}
+
+/* Switch container */
+.toggle-switch {
+  position: relative;
+  width: 42px;
+  height: 22px;
+  display: inline-block;
+}
+
+/* Hide default checkbox */
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* Slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background: rgba(255,255,255,0.08);
+  border-radius: 22px;
+  transition: 0.25s;
+  border: 1px solid rgba(175,120,255,0.25);
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 3px;
+  bottom: 3px;
+  background: rgba(175,120,255,0.8);
+  border-radius: 50%;
+  transition: 0.25s;
+}
+
+/* Checked state */
+.toggle-switch input:checked + .slider {
+  background: linear-gradient(135deg, #6220d0, #a050ee);
+}
+
+.toggle-switch input:checked + .slider:before {
+  transform: translateX(20px);
+}
+
 /* ── Leaflet popup overrides ── */
 .leaflet-popup-content-wrapper {
   background: rgba(12, 7, 28, 0.96) !important;

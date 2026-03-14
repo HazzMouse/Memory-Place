@@ -75,6 +75,7 @@ function focusMemory(memory) {
 function showForm(isEditing = false) {
   document.getElementById('memoryForm').classList.remove('hidden');
   if (!isEditing) editingMemoryId = null;
+  document.getElementById("removeImageCheckbox").checked = false;
 }
 
 function hideForm() {
@@ -82,6 +83,8 @@ function hideForm() {
   document.getElementById('memoryTitle').value = '';
   document.getElementById('memoryDescription').value = '';
   document.getElementById('memoryImage').value = '';
+  document.getElementById("removeImageCheckbox").checked = false;
+  document.getElementById("removeImageCheckbox").parentElement.style.display = "none";
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -101,6 +104,10 @@ async function saveMemory() {
 
   if (imageFile) {
     formData.append("image", imageFile);
+  }
+
+  if (document.getElementById("removeImageCheckbox").checked) {
+      formData.append("removeImage", "true");
   }
 
   let url = "http://localhost:3000/api/memories";
@@ -161,10 +168,20 @@ function startEdit(id) {
   const memory = memories.find(m => m.id === id);
   if (!memory) return;
 
+  document.getElementById("memoryImage").value = "";
   document.getElementById('memoryTitle').value = memory.title;
   document.getElementById('memoryDescription').value = memory.content;
   tempLatLng = memory.location;
   editingMemoryId = id;
+
+  // if image exists
+  if (memory.image) {
+    document.getElementById("removeImageCheckbox").checked = false;
+    document.getElementById("removeImageCheckbox").parentElement.style.display = "block";
+  } else {
+      document.getElementById("removeImageCheckbox").checked = false;
+      document.getElementById("removeImageCheckbox").parentElement.style.display = "none";
+  }
 
   showForm(true);
 }

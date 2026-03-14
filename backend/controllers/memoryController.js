@@ -113,13 +113,27 @@ const updateMemory = (req, res, next) => {
             }
         }
 
+        // Handle image update
+        let newImage = memories[index].image; // keep existing image by default
+
+        if (req.file) {
+            // User uploaded a new image
+            newImage = `/uploads/${req.file.filename}`;
+        }
+
+        if (req.body.removeImage === "true") {
+            // User wants to remove the image
+            newImage = null;
+        }
+
         // Apply updates
         memories[index] = {
             ...memories[index],
             title: title !== undefined ? title.trim() : memories[index].title,
             content: content !== undefined ? String(content).trim() : memories[index].content,
             location: parsedLocation, // ✅ always use the validated value
-            time: time !== undefined ? time : memories[index].time
+            time: time !== undefined ? time : memories[index].time,
+            image: newImage
         };
 
         writeMemories(memories);
