@@ -7,8 +7,17 @@ let tempLatLng = null;
 let memories = [];
 let editingMemoryId = null;
 
+const memoryIcon = L.icon({
+  iconUrl: 'marker.png',   // put your custom icon in /frontend
+  iconSize: [44, 66],
+  iconAnchor: [44, 66],
+  popupAnchor: [0, -28]
+});
+
 window.onload = () => {
   map = L.map('map').setView([-33.8688, 151.2093], 13);
+  map.zoomControl.setPosition('topright');
+
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
