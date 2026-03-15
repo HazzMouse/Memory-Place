@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login – MemoryPlace</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="auth-body">
+
+  <div class="auth-card">
+    <h1 class="auth-title">MemoryPlace</h1>
+    <p class="auth-sub">welcome back</p>
+
+    <input id="email" type="email" class="auth-input" placeholder="Email">
+    <input id="password" type="password" class="auth-input" placeholder="Password">
+
+    <button id="loginBtn" class="auth-btn auth-btn-primary">Login</button>
+
+    <p class="auth-switch">
+      No account?
+      <a href="signup.html">Create one</a>
+    </p>
+  </div>
+
+  <script>
+    document.getElementById("loginBtn").onclick = async () => {
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+
+        const res = await fetch("http://localhost:3000/api/auth/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok || !data.token) {
+            alert(data.error || "Login failed");
+            return;
+        }
+
+        localStorage.setItem("token", data.token);
+        window.location.href = "index.html";
+        };
+  </script>
+
+</body>
+</html>
