@@ -15,7 +15,14 @@ const memoryIcon = L.icon({
 });
 
 window.onload = () => {
-  map = L.map('map').setView([-33.8688, 151.2093], 13);
+  const bounds = [[-85, -180], [85, 180]];
+  map = L.map('map', {
+    maxBounds: bounds,
+    maxBoundsViscosity: 0.8,
+    worldCopyJump: false,
+    minZoom: 1,
+    maxZoom: 20
+  }).setView([-33.8688, 151.2093], 13);
   map.zoomControl.setPosition('topright');
 
   L.tileLayer('https://api.maptiler.com/maps/openstreetmap/256/{z}/{x}/{y}.png?key=ZYnLuAnXONks3zYPMqCb', {
@@ -24,7 +31,11 @@ window.onload = () => {
       maxZoom: 20,
       attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">© MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">© OpenStreetMap contributors</a>',
       crossOrigin: true,
+      noWrap: true
   }).addTo(map);
+  map.options.minZoom = 2;
+  map.options.maxZoom = 18;
+  map.options.worldCopyJump = false;
 
   // Rip I was trying to make the default a cursor instead of a hand
   // map.getCanvas().style.cursor = 'default';
