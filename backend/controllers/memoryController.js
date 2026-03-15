@@ -193,8 +193,19 @@ const deleteMemory = (req, res, next) => {
 
 const deleteAllMemories = (req, res, next) => {
     try {
+        const memories = readMemories();
+
+        // Delete every image file on disk
+        memories.forEach(memory => {
+            if (memory.image) {
+                deleteFileIfExists(memory.image);
+            }
+        });
+
+        // Clear the JSON file
         writeMemories([]);
-        res.json({ message: 'All memories have been permanently deleted.' });
+
+        res.json({ message: 'All memories and images have been permanently deleted.' });
     } catch (error) {
         next(error);
     }
