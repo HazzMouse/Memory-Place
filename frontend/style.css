@@ -44,10 +44,12 @@ header h1 {
 }
 .header-sub {
   font-size: 0.7rem;
-  color: rgba(175, 120, 255, 0.4);
+  color: rgba(220, 170, 255, 0.95);
   letter-spacing: 0.8em;
   margin-left: auto;
   text-transform: uppercase;
+  font-weight: 700;
+  text-shadow: 0 0 4px rgba(170, 80, 255, 0.4);
 }
 
 /* ── Sidebar ── */
@@ -114,6 +116,7 @@ header h1 {
   flex: 1;
   width: 100%;
   min-height: 0;
+  background: #111;
 }
 
 /* ── Add Memory Form ── */
