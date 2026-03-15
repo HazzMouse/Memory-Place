@@ -119,6 +119,43 @@ header h1 {
   background: #111;
 }
 
+.leaflet-control-zoom,
+.leaflet-control-zoom.leaflet-bar {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+.leaflet-control-zoom a,
+.leaflet-control-zoom .leaflet-control-zoom-in,
+.leaflet-control-zoom .leaflet-control-zoom-out {
+  width: 36px;
+  height: 36px;
+  line-height: 36px;
+  text-align: center;
+  color: #fff;
+  font-weight: 700;
+  border-radius: 50%;
+  margin: 2px 0;
+  background: rgba(80, 45, 160, 0.36) !important;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255,255,255,0.18) !important;
+  box-shadow: none !important;
+  transition: background 0.2s ease, transform 0.12s ease;
+}
+
+.leaflet-control-zoom a:hover,
+.leaflet-control-zoom .leaflet-control-zoom-in:hover,
+.leaflet-control-zoom .leaflet-control-zoom-out:hover {
+  background: rgba(170, 110, 255, 0.55) !important;
+  transform: scale(1.05);
+}
+
+.leaflet-control-zoom a:focus {
+  outline: none !important;
+}
+
 /* ── Add Memory Form ── */
 #memoryForm {
   position: fixed;
