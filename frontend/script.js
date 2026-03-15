@@ -1,3 +1,10 @@
+// Redirect to login if not authenticated
+const token = localStorage.getItem("token");
+
+if (!token || token === "undefined" || token === "null") {
+  window.location.href = "login.html";
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // MAP LOGIC
 // ─────────────────────────────────────────────────────────────────────────────
@@ -75,6 +82,10 @@ window.onload = () => {
   document.getElementById('cancelMemoryBtn').onclick = hideForm;
   document.getElementById("deleteAllBtn").onclick = deleteAllMemories;
   
+  document.getElementById("logoutBtn").onclick = () => {
+    localStorage.removeItem("token");
+    window.location.href = "login.html";
+  };
 
   loadMemories();
 };
@@ -229,7 +240,13 @@ async function saveMemory() {
     method = "PUT";
   }
 
-  await fetch(url, { method, body: formData });
+  await fetch(url, {
+    method,
+    headers: {
+      "Authorization": "Bearer " + localStorage.getItem("token")
+    },
+    body: formData
+  });
 
   hideForm();
   refreshMarkers();
@@ -290,14 +307,21 @@ async function deleteAllMemories() {
   if (!confirmed) return;
 
   await fetch(`${API_BASE}/api/memories`, {
-    method: "DELETE"
+    method: "DELETE",
+    headers: {
+      "Authorization": "Bearer " + localStorage.getItem("token")
+    }
   });
 
   refreshMarkers();
 }
 
 async function loadMemories() {
-  const res = await fetch(`${API_BASE}/api/memories`);
+  const res = await fetch(`${API_BASE}/api/memories`, {
+    headers: {
+      "Authorization": "Bearer " + localStorage.getItem("token")
+    }
+  });
   memories = await res.json();
 
   memories.forEach(memory => addMarker(memory));
@@ -328,7 +352,12 @@ function startEdit(id) {
 }
 
 async function deleteMemory(id) {
-  await fetch(`${API_BASE}/api/memories/${id}`, { method: 'DELETE' });
+  await fetch(`${API_BASE}/api/memories/${id}`, {
+    method: "DELETE",
+    headers: {
+      "Authorization": "Bearer " + localStorage.getItem("token")
+    }
+  });
   refreshMarkers();
 }
 
@@ -346,7 +375,11 @@ async function refreshMarkers() {
 async function enterMemory(id) {
   let memory = memories.find(m => m.id === id);
   if (!memory) {
-    const res = await fetch(`${API_BASE}/api/memories`);
+    const res = await fetch(`${API_BASE}/api/memories`, {
+      headers: {
+        "Authorization": "Bearer " + localStorage.getItem("token")
+      }
+    });
     const data = await res.json();
     memory = data.find(m => m.id === id);
   }
@@ -372,9 +405,13 @@ async function enterMemory(id) {
     try {
       await fetch(`${API_BASE}/api/memories/${memory.id}/scene`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + localStorage.getItem("token")
+        },
         body: JSON.stringify({ sceneData: null })
       });
+
       const idx = memories.findIndex(m => m.id === memory.id);
       if (idx !== -1) memories[idx].sceneData = null;
     } catch (e) {
@@ -387,9 +424,13 @@ async function enterMemory(id) {
     try {
       await fetch(`${API_BASE}/api/memories/${memory.id}/scene`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + localStorage.getItem("token")
+        },
         body: JSON.stringify({ sceneData: sd })
       });
+
       // Update local cache
       const idx = memories.findIndex(m => m.id === memory.id);
       if (idx !== -1) {
@@ -495,9 +536,13 @@ function closeDreamVisualiser() {
 async function parseMemory(prompt) {
   const res = await fetch(`${API_BASE}/api/parse-memory`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer " + localStorage.getItem("token")
+    },
     body: JSON.stringify({ prompt })
   });
+
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
     throw new Error(err.message || `Server error ${res.status}`);

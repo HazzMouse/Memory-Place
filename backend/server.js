@@ -1,38 +1,43 @@
-const express = require('express');
-const cors = require('cors');
-const dotenv = require('dotenv');
-const path = require('path');
-
-// Load .env from two directories back
-dotenv.config({ path: path.join(__dirname, '../.env') });
-
-const memoryRoutes = require('./routes/memoryRoutes');
-const parseMemoryRoute = require('./routes/parseMemoryRoute');
-const { errorHandler } = require('./middleware/errorMiddleware');
+// server.js
+require("dotenv").config();
+const express = require("express");
+const path = require("path");
+const cors = require("cors");
+const { authMiddleware } = require("./middleware/authMiddleware");
+const authRoutes = require("./routes/authRoutes");
+const memoryRoutes = require("./routes/memoryRoutes");
 
 const app = express();
-const PORT = process.env.PORT || 3000;
 
-// Middleware
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// Serve frontend
-app.use(express.static(path.join(__dirname, '../frontend')));
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend/index.html'));
+// Static uploads
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
+// Public auth routes
+app.use("/api/auth", authRoutes);
+
+// Protected memory routes
+app.use("/api/memories", authMiddleware, memoryRoutes);
+
+app.use("/api", require("./routes/parseMemoryRoute"));
+
+// Error handler
+app.use((err, req, res, next) => {
+  console.error(err);
+  if (!res.headersSent) {
+    res.status(res.statusCode !== 200 ? res.statusCode : 500).json({
+      error: err.message || "Server error"
+    });
+  }
 });
 
-// Routes
-app.use('/api/memories', memoryRoutes);
-app.use('/api/parse-memory', parseMemoryRoute);
-
-// Serve uploaded images
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
-// Error Handler (must come after routes)
-app.use(errorHandler);
-
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
+  console.log("Server running on port", PORT);
 });
+
+// console.log("authRoutes =", authRoutes);
+// console.log("memoryRoutes =", memoryRoutes);

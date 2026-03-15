@@ -1,0 +1,14 @@
+[
+  {
+    "id": "1773551038856",
+    "email": "dadreambank@gmail.com",
+    "passwordHash": "$2b$10$RWxGhppQeVr11GXspiMPNesPbtnJJAJ/w2kzTlX94nYEAWw7z0umm",
+    "createdAt": "2026-03-15T05:03:58.856Z"
+  },
+  {
+    "id": "1773552469459",
+    "email": "sussybaka@gmail.com",
+    "passwordHash": "$2b$10$vDfxKZBQPn27BXelTlIJc.ylvtdB4LbyuUAFOfp49kYBVjK8ft47i",
+    "createdAt": "2026-03-15T05:27:49.459Z"
+  }
+]
