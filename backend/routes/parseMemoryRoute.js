@@ -2,7 +2,6 @@ const { GoogleGenerativeAI } = require("@google/generative-ai");
 const express = require('express');
 const router = express.Router();
 
-// Initialize the Gemini SDK
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 router.post('/', async (req, res, next) => {
@@ -21,50 +20,66 @@ router.post('/', async (req, res, next) => {
 
         const model = genAI.getGenerativeModel({
             model: "gemini-2.5-flash",
-            generationConfig: {
-                responseMimeType: "application/json",
-            }
+            generationConfig: { responseMimeType: "application/json" }
         });
 
-        const systemInstruction = `You are a dream scene interpreter. Given a memory, extract scene data for a beautiful 3D dreamlike rendering.
-Respond ONLY with a JSON object following this schema:
+        const systemInstruction = `You are a memory sculptor. Given a memory, design ONE central 3D object that symbolises it — built from geometric primitives — plus the dreamlike environment it inhabits.
+
+Respond ONLY with a JSON object exactly matching this schema (no markdown, no extra keys):
 {
-  "skyTop": "hex string",
-  "skyBottom": "hex string",
-  "fogColor": "hex string",
-  "lightColor": "hex string",
-  "accentColor": "hex string",
-  "groundColor": "hex string",
-  "objects": [{ "type": "string", "count": number, "scale": number, "glowing": boolean, "floating": boolean, "speechText": "string or null" }],
-  "ambientIntensity": number (0.2-0.7),
-  "particleDensity": number (400-1200),
-  "dreamIntensity": number (0.4-1.0),
-  "title": "3-5 poetic words"
+  "title": "3-5 poetic lowercase words",
+  "skyTop": "#hexcolor",
+  "skyBottom": "#hexcolor",
+  "fogColor": "#hexcolor",
+  "lightColor": "#hexcolor",
+  "accentColor": "#hexcolor",
+  "groundColor": "#hexcolor",
+  "ambientIntensity": 0.2 to 0.7,
+  "particleDensity": 400 to 1200,
+  "dreamIntensity": 0.4 to 1.0,
+  "particleColor": "#hexcolor",
+  "object": {
+    "label": "short name of what the object is, e.g. oak tree, lighthouse, grandmother",
+    "primitives": [
+      {
+        "shape": "box|sphere|cylinder|cone|torus|ring|octahedron|icosahedron",
+        "x": 0, "y": 0, "z": 0,
+        "sx": 1, "sy": 1, "sz": 1,
+        "rx": 0, "ry": 0, "rz": 0,
+        "color": "#hexcolor",
+        "emissive": "#hexcolor or null",
+        "emissiveIntensity": 0.0,
+        "roughness": 0.7,
+        "opacity": 1.0,
+        "animation": "none|float|spin_y|spin_z|pulse|sway"
+      }
+    ]
+  }
 }
 
-Rules:
-- Objects: Choose 4-8 from this full list:
-    tree, willow, pine, oak, bush, bamboo,
-    house, cabin, castle, fence, bench, bridge, well, windmill, barn, lighthouse,
-    mountain, hill, cliff,
-    moon, sun, stars, cloud, rainbow,
-    water, lake, river, waterfall,
-    flower, mushroom, cactus, fern,
-    bird, butterfly, cat, dog, rabbit, horse, deer,
-    lantern, path, arch, stone, grass,
-    person, crowd,
-    speech_bubble, balloon, kite, boat, campfire, tent, umbrella.
-- person: Renders a stylised Mii-like character. Use count 1-5. Include when the memory mentions specific people.
-- crowd: Renders a loose group of small background figures. Use count 1.
-- speech_bubble: Floats above a nearby person. Set speechText to a short quote or feeling (max 6 words). Include when dialogue or strong emotion is mentioned.
-- Aesthetic: Painterly and atmospheric — Studio Ghibli meets impressionism.`;
+GEOMETRY RULES:
+- sphere / icosahedron / octahedron: sx = radius (sy, sz ignored)
+- cylinder: sx = top radius, sy = height, sz = bottom radius
+- cone: sx = base radius, sy = height (sz ignored)
+- torus: sx = outer radius, sy = tube radius (sz ignored)
+- ring: sx = inner radius, sy = outer radius (sz ignored)
+- box: sx = width, sy = height, sz = depth
+- Rotations in radians. All positions relative to object centre at ground level (y=0).
+- 1 unit ≈ 1 metre. A person is ~1.8 tall. A house is ~3 wide, ~2.5 tall.
+
+DESIGN RULES:
+- Choose the ONE object that best symbolises the memory (a tree, a lantern, a house, a chair, a boat, a person, a flower, etc.)
+- Use 10–30 primitives to build it with real detail — think low-poly 3D modelling.
+- animation: "float" = gentle up/down bob. "spin_y" = slow Y-axis rotation. "spin_z" = Z-axis spin. "pulse" = gentle scale throb. "sway" = gentle Z-axis rock. "none" = static.
+- emissive: use for glowing parts only (lantern flame, window light, flower centre, eyes). Set null otherwise.
+- opacity < 1.0 for translucent parts (water, glass, petals, mist).
+- Colour mood should match the memory's emotional tone and scene colours.
+- Aesthetic: painterly low-poly, Studio Ghibli meets impressionism.`;
 
         const userPrompt = `Memory: "${prompt.trim()}"`;
 
         const result = await model.generateContent([systemInstruction, userPrompt]);
-        const response = await result.response;
-        const text = response.text();
-
+        const text = result.response.text();
         const sceneData = JSON.parse(text);
         res.json(sceneData);
 
