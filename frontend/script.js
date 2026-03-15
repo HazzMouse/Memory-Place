@@ -13,6 +13,7 @@ let map;
 let tempLatLng = null;
 let memories = [];
 let editingMemoryId = null;
+const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:3000' : window.location.origin;
 
 const memoryIcon = L.icon({
   iconUrl: 'marker.png',
@@ -231,11 +232,11 @@ async function saveMemory() {
       formData.append("removeImage", "true");
   }
 
-  let url = "http://localhost:3000/api/memories";
+  let url = `${API_BASE}/api/memories`;
   let method = "POST";
 
   if (editingMemoryId) {
-    url = `http://localhost:3000/api/memories/${editingMemoryId}`;
+    url = `${API_BASE}/api/memories/${editingMemoryId}`;
     method = "PUT";
   }
 
@@ -274,7 +275,7 @@ function buildPopupHtml(memory) {
       <div class="popup-title">${memory.title}</div>
 
       ${memory.image ? `
-        <img src="http://localhost:3000${memory.image}"
+        <img src="${API_BASE}${memory.image}"
              style="width:100%;border-radius:8px;margin:6px 0 8px;object-fit:cover;max-height:120px;">
       ` : ""}
 
@@ -305,7 +306,7 @@ async function deleteAllMemories() {
 
   if (!confirmed) return;
 
-  await fetch("http://localhost:3000/api/memories", {
+  await fetch(`${API_BASE}/api/memories`, {
     method: "DELETE",
     headers: {
       "Authorization": "Bearer " + localStorage.getItem("token")
@@ -316,12 +317,11 @@ async function deleteAllMemories() {
 }
 
 async function loadMemories() {
-  const res = await fetch("http://localhost:3000/api/memories", {
+  const res = await fetch(`${API_BASE}/api/memories`, {
     headers: {
       "Authorization": "Bearer " + localStorage.getItem("token")
     }
   });
-
   memories = await res.json();
 
   memories.forEach(memory => addMarker(memory));
@@ -339,7 +339,7 @@ function startEdit(id) {
   editingMemoryId = id;
 
   if (memory.image) {
-    setImagePreview(`http://localhost:3000${memory.image}`);
+    setImagePreview(`${API_BASE}${memory.image}`);
     document.getElementById("removeImageCheckbox").checked = false;
     document.getElementById("removeImageWrap").style.display = "flex";
   } else {
@@ -352,13 +352,12 @@ function startEdit(id) {
 }
 
 async function deleteMemory(id) {
-  await fetch(`http://localhost:3000/api/memories/${id}`, {
+  await fetch(`${API_BASE}/api/memories/${id}`, {
     method: "DELETE",
     headers: {
       "Authorization": "Bearer " + localStorage.getItem("token")
     }
   });
-
   refreshMarkers();
 }
 
@@ -376,19 +375,18 @@ async function refreshMarkers() {
 async function enterMemory(id) {
   let memory = memories.find(m => m.id === id);
   if (!memory) {
-    const res = await fetch('http://localhost:3000/api/memories', {
+    const res = await fetch(`${API_BASE}/api/memories`, {
       headers: {
         "Authorization": "Bearer " + localStorage.getItem("token")
       }
     });
-
     const data = await res.json();
     memory = data.find(m => m.id === id);
   }
   if (!memory) return;
 
   const prompt = [memory.title, memory.content].filter(Boolean).join('. ');
-  const imageUrl = memory.image ? `http://localhost:3000${memory.image}` : null;
+  const imageUrl = memory.image ? `${API_BASE}${memory.image}` : null;
 
   // ── Use cached scene only if it has valid primitives ──
   const hasPrimitives = memory.sceneData &&
@@ -405,7 +403,7 @@ async function enterMemory(id) {
   if (memory.sceneData && !hasPrimitives) {
     // Wipe the bad cached entry so it saves fresh after generation
     try {
-      await fetch(`http://localhost:3000/api/memories/${memory.id}/scene`, {
+      await fetch(`${API_BASE}/api/memories/${memory.id}/scene`, {
         method: 'PATCH',
         headers: {
           "Content-Type": "application/json",
@@ -424,7 +422,7 @@ async function enterMemory(id) {
   // ── Otherwise generate and cache ──
   launchDreamVisualiser(prompt, memory.title, prompt, null, imageUrl, async (sd) => {
     try {
-      await fetch(`http://localhost:3000/api/memories/${memory.id}/scene`, {
+      await fetch(`${API_BASE}/api/memories/${memory.id}/scene`, {
         method: 'PATCH',
         headers: {
           "Content-Type": "application/json",
@@ -536,7 +534,7 @@ function closeDreamVisualiser() {
 // ─────────────────────────────────────────────────────────────────────────────
 
 async function parseMemory(prompt) {
-  const res = await fetch('http://localhost:3000/api/parse-memory', {
+  const res = await fetch(`${API_BASE}/api/parse-memory`, {
     method: 'POST',
     headers: {
       "Content-Type": "application/json",
