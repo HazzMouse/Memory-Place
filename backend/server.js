@@ -1,4 +1,5 @@
 // server.js
+require("dotenv").config();
 const express = require("express");
 const path = require("path");
 const cors = require("cors");
@@ -20,6 +21,8 @@ app.use("/api/auth", authRoutes);
 
 // Protected memory routes
 app.use("/api/memories", authMiddleware, memoryRoutes);
+
+app.use("/api", require("./routes/parseMemoryRoute"));
 
 // Error handler
 app.use((err, req, res, next) => {
