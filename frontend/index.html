@@ -32,14 +32,34 @@
   <body>
   <!-- ── Add/Edit Memory Form ── -->
     <div id="memoryForm" class="hidden">
-      <h2>Add Memory</h2>
+      <h2 id="formTitle">Add Memory</h2>
       <label>Title</label>
       <input id="memoryTitle" type="text" placeholder="A summer afternoon…" />
       <label>Description</label>
       <textarea id="memoryDescription" placeholder="Describe what you remember…"></textarea>
-      <label>Photo:</label>
-      <input type="file" id="memoryImage" accept="image/*">
-      <div class="toggle-wrap" id="removeImageWrap">
+
+      <!-- Drag-and-drop image upload -->
+      <label>Photo</label>
+      <div class="image-upload-wrap" id="imageUploadWrap">
+        <input type="file" id="memoryImage" accept="image/*" />
+        <img id="imagePreview" class="image-preview hidden" />
+        <div class="image-upload-placeholder" id="imagePlaceholder">
+          <div class="upload-cloud">
+            <svg viewBox="0 0 64 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M32 36V18M32 18L24 26M32 18L40 26" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M48 36H52a8 8 0 000-16h-1.06A16 16 0 1012.26 36H16" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <span class="upload-main-label">Drop a photo here</span>
+          <span class="upload-sub-label">or <span class="upload-browse-link">browse files</span></span>
+          <span class="upload-hint">PNG, JPG, HEIC up to 20MB</span>
+        </div>
+        <div class="upload-drag-active-overlay" id="uploadDragOverlay">
+          <div class="upload-drag-active-text">Drop to add photo</div>
+        </div>
+      </div>
+
+      <div class="toggle-wrap" id="removeImageWrap" style="display:none">
         <label class="toggle-label">Remove Existing Image</label>
         <label class="toggle-switch">
           <input type="checkbox" id="removeImageCheckbox">
@@ -54,7 +74,7 @@
 
   <!-- ── Page Header ── -->
   <header>
-    <span class="header-logo">✦</span>
+    <img src="marker.png" class="header-logo" alt="MemoryPlace marker" />
     <h1>MemoryPlace</h1>
     <span class="header-sub">click anywhere on the map to add a memory</span>
   </header>

@@ -104,6 +104,7 @@ function hideForm() {
   document.getElementById('memoryImage').value = '';
   document.getElementById("removeImageCheckbox").checked = false;
   document.getElementById("removeImageWrap").style.display = "none";
+  document.getElementById("imageUploadWrap").classList.remove('drag-over');
   // Reset image preview
   const preview = document.getElementById('imagePreview');
   const placeholder = document.getElementById('imagePlaceholder');
@@ -111,15 +112,48 @@ function hideForm() {
   if (placeholder) placeholder.style.display = 'flex';
 }
 
-// Wire up image preview on file select
+// Wire up image upload — drag-and-drop + click-to-browse
 document.addEventListener('DOMContentLoaded', () => {
   const imgInput = document.getElementById('memoryImage');
-  if (imgInput) {
-    imgInput.addEventListener('change', () => {
-      const file = imgInput.files[0];
-      setImagePreview(file ? URL.createObjectURL(file) : null);
-    });
-  }
+  const wrap     = document.getElementById('imageUploadWrap');
+
+  if (!imgInput || !wrap) return;
+
+  // File chosen via the native picker
+  imgInput.addEventListener('change', () => {
+    const file = imgInput.files[0];
+    setImagePreview(file ? URL.createObjectURL(file) : null);
+  });
+
+  // Drag enter/over — add visual class
+  wrap.addEventListener('dragenter', e => {
+    e.preventDefault();
+    wrap.classList.add('drag-over');
+  });
+  wrap.addEventListener('dragover', e => {
+    e.preventDefault();
+    wrap.classList.add('drag-over');
+  });
+
+  // Drag leave — only remove class when leaving the wrap itself
+  wrap.addEventListener('dragleave', e => {
+    if (!wrap.contains(e.relatedTarget)) {
+      wrap.classList.remove('drag-over');
+    }
+  });
+
+  // Drop — hand the file to the input and preview it
+  wrap.addEventListener('drop', e => {
+    e.preventDefault();
+    wrap.classList.remove('drag-over');
+    const file = e.dataTransfer.files[0];
+    if (!file || !file.type.startsWith('image/')) return;
+    // Assign to the real input so FormData picks it up on save
+    const dt = new DataTransfer();
+    dt.items.add(file);
+    imgInput.files = dt.files;
+    setImagePreview(URL.createObjectURL(file));
+  });
 });
 
 function setImagePreview(src) {
