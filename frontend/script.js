@@ -57,7 +57,7 @@ function renderSidebar() {
   const list = document.getElementById("memoryList");
   list.innerHTML = "";
 
-  memories.forEach(memory => {
+  [...memories].reverse().forEach(memory => {
     const item = document.createElement("div");
     item.className = "memory-item";
     item.onclick = () => focusMemory(memory);
@@ -215,11 +215,18 @@ async function saveMemory() {
 function addMarker(memory) {
   const marker = L.marker([memory.location.lat, memory.location.lng], { icon: memoryIcon }).addTo(map);
 
+  // Store marker on the memory object so we can update the popup later
+  memory._marker = marker;
+
+  bindPopup(marker, memory);
+}
+
+function buildPopupHtml(memory) {
   const cachedBadge = memory.sceneData
     ? `<span class="popup-cached-badge">✦ scene ready</span>`
     : '';
 
-  marker.bindPopup(`
+  return `
     <div class="popup-inner">
       <div class="popup-title">${memory.title}</div>
 
@@ -239,7 +246,11 @@ function addMarker(memory) {
         <button class="popup-btn popup-btn--delete" onclick="deleteMemory('${memory.id}')">Delete</button>
       </div>
     </div>
-  `);
+  `;
+}
+
+function bindPopup(marker, memory) {
+  marker.bindPopup(buildPopupHtml(memory));
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -334,16 +345,21 @@ async function enterMemory(id) {
 
   // ── Otherwise generate and cache ──
   launchDreamVisualiser(prompt, memory.title, prompt, null, imageUrl, async (sd) => {
-    // Save sceneData back to the server so we never call Gemini again for this memory
     try {
       await fetch(`http://localhost:3000/api/memories/${memory.id}/scene`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ sceneData: sd })
       });
-      // Update local cache too
+      // Update local cache
       const idx = memories.findIndex(m => m.id === memory.id);
-      if (idx !== -1) memories[idx].sceneData = sd;
+      if (idx !== -1) {
+        memories[idx].sceneData = sd;
+        // Rebind the marker popup in-place so "scene ready" appears without a refresh
+        if (memories[idx]._marker) {
+          bindPopup(memories[idx]._marker, memories[idx]);
+        }
+      }
     } catch (e) {
       console.warn('Could not cache scene:', e);
     }
@@ -371,6 +387,11 @@ function launchDreamVisualiser(prompt, memoryTitle, displayPrompt, cachedSd, ima
   const tagList = document.getElementById('dream-tags');
 
   overlay.style.display = 'block';
+
+  // ── Clear stale content from any previous memory immediately ──
+  sceneTitle.textContent  = '';
+  scenePrompt.textContent = '';
+  tagList.innerHTML       = '';
 
   const applyScene = (sd) => {
     sd.skyTop      = sd.skyTop      || '#1a0a2e';
