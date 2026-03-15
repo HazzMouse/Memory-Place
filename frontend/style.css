@@ -208,6 +208,53 @@ header h1 {
   margin-bottom: 4px;
 }
 
+/* ── Image Upload Area ── */
+.image-upload-wrap {
+  width: 100%;
+  min-height: 90px;
+  border: 1.5px dashed rgba(175, 120, 255, 0.28);
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.03);
+  transition: border-color 0.2s, background 0.2s;
+}
+.image-upload-wrap:hover {
+  border-color: rgba(175, 120, 255, 0.6);
+  background: rgba(175, 120, 255, 0.06);
+}
+.image-upload-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 18px;
+  pointer-events: none;
+  user-select: none;
+}
+.upload-icon {
+  font-size: 1.7rem;
+  color: rgba(175, 120, 255, 0.38);
+  line-height: 1;
+}
+.upload-label {
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  color: rgba(175, 120, 255, 0.45);
+  text-transform: uppercase;
+}
+.image-preview {
+  width: 100%;
+  max-height: 160px;
+  object-fit: cover;
+  display: block;
+  border-radius: 8px;
+}
+
 .toggle-label {
   font-size: 0.7rem;
   letter-spacing: 0.1em;
@@ -343,6 +390,21 @@ header h1 {
   color: rgba(255,150,150,0.55);
 }
 .popup-btn--delete:hover { background: rgba(255,80,80,0.1); color: rgba(255,150,150,0.9); }
+
+.popup-cached-badge {
+  display: inline-block;
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  color: rgba(175, 220, 140, 0.85);
+  background: rgba(80, 180, 80, 0.12);
+  border: 1px solid rgba(100, 200, 100, 0.25);
+  border-radius: 10px;
+  padding: 1px 7px;
+  margin-left: 6px;
+  vertical-align: middle;
+  font-weight: 400;
+  text-transform: uppercase;
+}
 
 /* ── Dream Visualiser Overlay ── */
 @keyframes shimmer { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }

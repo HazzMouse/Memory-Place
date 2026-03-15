@@ -14,15 +14,13 @@ router.post('/', async (req, res, next) => {
             throw new Error('A prompt is required.');
         }
 
-        // Check for API Key
         if (!process.env.GEMINI_API_KEY) {
             res.status(500);
             throw new Error('GEMINI_API_KEY is not set in the server environment.');
         }
 
-        // Initialize the model with JSON constraint
-        const model = genAI.getGenerativeModel({ 
-            model: "gemini-2.5-flash", // Or "gemini-3.1-flash-lite-preview"
+        const model = genAI.getGenerativeModel({
+            model: "gemini-2.5-flash",
             generationConfig: {
                 responseMimeType: "application/json",
             }
@@ -37,7 +35,7 @@ Respond ONLY with a JSON object following this schema:
   "lightColor": "hex string",
   "accentColor": "hex string",
   "groundColor": "hex string",
-  "objects": [{ "type": "string", "count": number, "scale": number, "glowing": boolean, "floating": boolean }],
+  "objects": [{ "type": "string", "count": number, "scale": number, "glowing": boolean, "floating": boolean, "speechText": "string or null" }],
   "ambientIntensity": number (0.2-0.7),
   "particleDensity": number (400-1200),
   "dreamIntensity": number (0.4-1.0),
@@ -45,22 +43,32 @@ Respond ONLY with a JSON object following this schema:
 }
 
 Rules:
-- Objects: Choose 4-6 from: tree, willow, pine, house, mountain, moon, sun, water, flower, bird, stars, lantern, path, arch, stone, grass.
+- Objects: Choose 4-8 from this full list:
+    tree, willow, pine, oak, bush, bamboo,
+    house, cabin, castle, fence, bench, bridge, well, windmill, barn, lighthouse,
+    mountain, hill, cliff,
+    moon, sun, stars, cloud, rainbow,
+    water, lake, river, waterfall,
+    flower, mushroom, cactus, fern,
+    bird, butterfly, cat, dog, rabbit, horse, deer,
+    lantern, path, arch, stone, grass,
+    person, crowd,
+    speech_bubble, balloon, kite, boat, campfire, tent, umbrella.
+- person: Renders a stylised Mii-like character. Use count 1-5. Include when the memory mentions specific people.
+- crowd: Renders a loose group of small background figures. Use count 1.
+- speech_bubble: Floats above a nearby person. Set speechText to a short quote or feeling (max 6 words). Include when dialogue or strong emotion is mentioned.
 - Aesthetic: Painterly and atmospheric — Studio Ghibli meets impressionism.`;
 
         const userPrompt = `Memory: "${prompt.trim()}"`;
 
-        // Generate content
         const result = await model.generateContent([systemInstruction, userPrompt]);
         const response = await result.response;
         const text = response.text();
 
-        // Gemini with JSON mode is very reliable, but we'll parse safely
         const sceneData = JSON.parse(text);
         res.json(sceneData);
 
     } catch (err) {
-        // Handle Gemini-specific errors or parsing issues
         if (err instanceof SyntaxError) {
             res.status(502);
             return next(new Error('Gemini returned invalid JSON.'));

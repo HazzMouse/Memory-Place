@@ -3,29 +3,105 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Memory Map API Documentation</title>
-  <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5.11.0/swagger-ui.css" />
-  <style>
-    body { margin: 0; padding: 0; }
-  </style>
+  <title>MemoryPlace</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <link rel="icon" type="image/x-icon" href="./images/favicon.png">
 </head>
 <body>
-  <div id="swagger-ui"></div>
-  
-  <script src="https://unpkg.com/swagger-ui-dist@5.11.0/swagger-ui-bundle.js" crossorigin></script>
-  <script src="https://unpkg.com/swagger-ui-dist@5.11.0/swagger-ui-standalone-preset.js" crossorigin></script>
-  <script>
-    window.onload = () => {
-      window.ui = SwaggerUIBundle({
-        url: './swagger.yaml', // Points to the YAML file in the same folder
-        dom_id: '#swagger-ui',
-        presets: [
-          SwaggerUIBundle.presets.apis,
-          SwaggerUIStandalonePreset
-        ],
-        layout: "StandaloneLayout",
-      });
-    };
-  </script>
+
+    <!-- Leaflet CSS -->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet/dist/leaflet.css"
+    />
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  </head>
+
+<!-- ── Sidebar ── -->
+<div id="sidebar">
+  <h2 class="sidebar-title">Memories</h2>
+  <div id="memoryList"></div>
+</div>
+
+
+  <body>
+  <!-- ── Add/Edit Memory Form ── -->
+    <div id="memoryForm" class="hidden">
+      <h2 id="formTitle">Add Memory</h2>
+      <label>Title</label>
+      <input id="memoryTitle" type="text" placeholder="A summer afternoon…" />
+      <label>Description</label>
+      <textarea id="memoryDescription" placeholder="Describe what you remember…"></textarea>
+
+      <!-- Styled image upload -->
+      <label>Photo</label>
+      <div class="image-upload-wrap" id="imageUploadWrap" onclick="document.getElementById('memoryImage').click()">
+        <input type="file" id="memoryImage" accept="image/*" style="display:none" />
+        <img id="imagePreview" class="image-preview hidden" />
+        <div class="image-upload-placeholder" id="imagePlaceholder">
+          <span class="upload-icon">⊕</span>
+          <span class="upload-label">tap to add photo</span>
+        </div>
+      </div>
+
+      <div class="toggle-wrap" id="removeImageWrap" style="display:none">
+        <label class="toggle-label">Remove Existing Image</label>
+        <label class="toggle-switch">
+          <input type="checkbox" id="removeImageCheckbox">
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="form-actions">
+        <button id="saveMemoryBtn" class="btn btn--primary">Save Memory</button>
+        <button id="cancelMemoryBtn" class="btn btn--ghost">Cancel</button>
+    </div>
+  </div>
+
+  <!-- ── Page Header ── -->
+  <header>
+    <span class="header-logo">✦</span>
+    <h1>MemoryPlace</h1>
+    <span class="header-sub">click anywhere on the map to add a memory</span>
+  </header>
+
+  <!-- ── Map ── -->
+  <div id="map"></div>
+
+  <!-- ── Dream Visualiser Overlay ── -->
+  <div id="dream-overlay">
+    <!-- Canvas fills the overlay -->
+    <canvas id="dream-canvas"></canvas>
+
+    <!-- Vignette -->
+    <div class="dream-vignette"></div>
+
+    <!-- Loading state -->
+    <div id="dream-loading">
+      <div class="dream-spinner"></div>
+      <div class="dream-loading-text">dissolving into dream…</div>
+    </div>
+
+    <!-- Scene title + prompt -->
+    <div class="dream-title-wrap">
+      <div id="dream-title"></div>
+      <div id="dream-prompt"></div>
+    </div>
+
+    <!-- Controls hint -->
+    <div class="dream-controls-hint">drag to rotate &nbsp;·&nbsp; scroll to zoom &nbsp;·&nbsp; right-drag to pan</div>
+
+    <!-- Tags -->
+    <div id="dream-tags"></div>
+
+    <!-- Back button -->
+    <button id="dream-back-btn" onclick="closeDreamVisualiser()">← back to map</button>
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
