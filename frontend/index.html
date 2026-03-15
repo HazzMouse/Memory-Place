@@ -4,32 +4,28 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>MemoryPlace</title>
+
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <link rel="icon" type="image/x-icon" href="./images/favicon.png">
 </head>
+
 <body>
 
-    <!-- Leaflet CSS -->
-    <link
-      rel="stylesheet"
-      href="https://unpkg.com/leaflet/dist/leaflet.css"
-    />
+  <button id="sidebarToggle" class="sidebar-toggle">☰</button>
 
-    <!-- Leaflet JS -->
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  </head>
+  <!-- ── Sidebar ── -->
+  <div id="sidebar">
+    <h2 class="sidebar-title">Memories</h2>
+    <div id="memoryList"></div>
 
-<!-- ── Sidebar ── -->
-<div id="sidebar">
-  <h2 class="sidebar-title">Memories</h2>
-  <div id="memoryList"></div>
-</div>
+    <button id="deleteAllBtn" class="delete-all-btn">
+      Delete All Memories
+    </button>
+  </div>
 
-
-  <body>
   <!-- ── Add/Edit Memory Form ── -->
     <div id="memoryForm" class="hidden">
       <h2 id="formTitle">Add Memory</h2>

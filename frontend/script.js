@@ -57,8 +57,23 @@ window.onload = () => {
     showForm();
   });
 
+  document.getElementById("sidebarToggle").onclick = () => {
+    const sidebar = document.getElementById("sidebar");
+    const mapDiv = document.getElementById("map");
+
+    sidebar.classList.toggle("closed");
+    mapDiv.classList.toggle("shifted");
+
+    // Force Leaflet to recalc map size
+    setTimeout(() => {
+      map.invalidateSize();
+    }, 350);
+  };
+
   document.getElementById('saveMemoryBtn').onclick = saveMemory;
   document.getElementById('cancelMemoryBtn').onclick = hideForm;
+  document.getElementById("deleteAllBtn").onclick = deleteAllMemories;
+  
 
   loadMemories();
 };
@@ -267,6 +282,18 @@ function bindPopup(marker, memory) {
 // ─────────────────────────────────────────────────────────────────────────────
 // LOAD / EDIT / DELETE
 // ─────────────────────────────────────────────────────────────────────────────
+
+async function deleteAllMemories() {
+  const confirmed = confirm("Are you sure you want to delete ALL memories? This cannot be undone.");
+
+  if (!confirmed) return;
+
+  await fetch("http://localhost:3000/api/memories", {
+    method: "DELETE"
+  });
+
+  refreshMarkers();
+}
 
 async function loadMemories() {
   const res = await fetch('http://localhost:3000/api/memories');

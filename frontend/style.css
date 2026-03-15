@@ -52,6 +52,44 @@ header h1 {
   text-shadow: 0 0 4px rgba(170, 80, 255, 0.4);
 }
 
+/* Toggle button */
+.sidebar-toggle {
+  position: absolute;
+  top: 72px;
+  left: 12px;
+  z-index: 2000;
+  background: rgba(20, 12, 40, 0.7);
+  border: 1px solid rgba(175, 120, 255, 0.3);
+  color: #ddc8f8;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  transition: background 0.2s, transform 0.2s;
+}
+
+.sidebar-toggle:hover {
+  background: rgba(80, 40, 160, 0.5);
+  transform: scale(1.05);
+}
+
+/* Sidebar closed state */
+#sidebar.closed {
+  transform: translateX(-260px);
+}
+
+/* Sidebar animation */
+#sidebar {
+  transition: transform 0.35s ease;
+}
+
+/* Map shifts when sidebar closes */
+#map.shifted {
+  margin-left: 0 !important;
+  transition: margin-left 0.35s ease;
+}
+
 /* ── Sidebar ── */
 #sidebar {
   position: absolute;
@@ -65,6 +103,9 @@ header h1 {
   padding: 18px 14px;
   overflow-y: auto;
   z-index: 600;
+
+  display: flex;
+  flex-direction: column;
 }
 
 .sidebar-title {
@@ -77,7 +118,29 @@ header h1 {
   text-align: center;
 }
 
+.delete-all-btn {
+  background: linear-gradient(135deg, #ff5c5c, #ff3b3b);
+  color: #ffecec;
+  border: 1px solid rgba(255, 120, 120, 0.35);
+  padding: 12px;
+  font-size: 0.85rem;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+  width: 100%;
+  border-radius: 10px;
+  margin-top: auto;
+  box-shadow: 0 4px 14px rgba(255, 80, 80, 0.25);
+  transition: background 0.2s, box-shadow 0.2s;
+}
+
+.delete-all-btn:hover {
+  background: linear-gradient(135deg, #ff3b3b, #ff1f1f);
+  box-shadow: 0 6px 20px rgba(255, 60, 60, 0.35);
+}
+
 #memoryList {
+  flex: 1;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 10px;
